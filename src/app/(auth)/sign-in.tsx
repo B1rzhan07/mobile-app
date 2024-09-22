@@ -1,82 +1,90 @@
 import {
   Dimensions,
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import React, { useState } from "react";
-import { images } from "@/src/constants";
+import React from "react";
 import { FormField } from "@/src/components/FormField";
 import { CustomButton } from "@/src/components/CustomButton";
-import { Link } from "expo-router";
 import { useBearStore } from "@/src/store/store";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+export const signInSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email("Please enter a valid email"),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
+});
+
+export type SignInSchemaType = z.infer<typeof signInSchema>;
 
 const SignInPage = () => {
   const bears = useBearStore((state) => state.bears);
   const increasePopulation = useBearStore((state) => state.increasePopulation);
   const removeAllBears = useBearStore((state) => state.removeAllBears);
-  const [isSubmitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInSchemaType>({
+    resolver: zodResolver(signInSchema),
   });
+
+  const onSubmit = (data: SignInSchemaType) => {
+    console.log(data, 123);
+  };
   return (
     <SafeAreaView className="h-full bg-slate-500">
       <ScrollView>
         <View
-          className="w-full flex justify-center h-full px-4 my-6"
+          className="w-full flex justify-center h-full px-4"
           style={{
             minHeight: Dimensions.get("window").height - 100,
           }}
         >
-          <Image
-            source={images.logo}
-            resizeMode="contain"
-            className="w-[115px] h-[34px]"
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onBlur, onChange, value } }) => (
+              <FormField
+                title="Email"
+                value={value}
+                handleChangeText={onChange}
+                keyboardType="email-address"
+                onBlur={onBlur}
+              />
+            )}
           />
-
-          <FormField
-            title="Email"
-            value={form.email}
-            handleChangeText={(e) => setForm({ ...form, email: e })}
-            otherStyles="mt-7"
-            keyboardType="email-address"
+          <Text>{errors.email?.message}</Text>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field: { onBlur, onChange, value } }) => (
+              <FormField
+                title="Password"
+                value={value}
+                handleChangeText={onChange}
+                keyboardType="email-address"
+                onBlur={onBlur}
+                otherStyles="mt-7"
+              />
+            )}
           />
-
-          <FormField
-            title="Password"
-            value={form.password}
-            handleChangeText={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-7"
-          />
-          <Text>{bears}</Text>
+          <Text>{errors.password?.message}</Text>
           <CustomButton
-            title="Sign In"
-            handlePress={increasePopulation}
-            containerStyles="mt-7"
-            isLoading={isSubmitting}
+            handlePress={handleSubmit(onSubmit)}
+            title="Submit"
+            containerStyles="mt-2"
           />
-          <CustomButton
-            title="Remove"
-            handlePress={removeAllBears}
-            containerStyles="mt-7"
-            isLoading={isSubmitting}
-          />
-
-          <View className="flex justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg text-gray-100 font-pregular">
-              Don't have an account?
-            </Text>
-            <Link
-              href="/sign-up"
-              className="text-lg font-psemibold text-secondary"
-            >
-              Signup
-            </Link>
-          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
