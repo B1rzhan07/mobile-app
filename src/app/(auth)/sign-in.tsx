@@ -12,8 +12,12 @@ import { images } from "@/src/constants";
 import { FormField } from "@/src/components/FormField";
 import { CustomButton } from "@/src/components/CustomButton";
 import { Link } from "expo-router";
+import { useBearStore } from "@/src/store/store";
 
 const SignInPage = () => {
+  const bears = useBearStore((state) => state.bears);
+  const increasePopulation = useBearStore((state) => state.increasePopulation);
+  const removeAllBears = useBearStore((state) => state.removeAllBears);
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     email: "",
@@ -48,10 +52,16 @@ const SignInPage = () => {
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
           />
-
+          <Text>{bears}</Text>
           <CustomButton
             title="Sign In"
-            handlePress={() => {}}
+            handlePress={increasePopulation}
+            containerStyles="mt-7"
+            isLoading={isSubmitting}
+          />
+          <CustomButton
+            title="Remove"
+            handlePress={removeAllBears}
             containerStyles="mt-7"
             isLoading={isSubmitting}
           />
