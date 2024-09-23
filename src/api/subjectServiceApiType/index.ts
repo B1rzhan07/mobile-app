@@ -1,0 +1,1 @@
+export { fetchSubjects } from "./getSubjects";

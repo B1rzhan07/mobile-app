@@ -75,7 +75,6 @@ const SignInPage = () => {
                 handleChangeText={onChange}
                 keyboardType="email-address"
                 onBlur={onBlur}
-                otherStyles="mt-7"
               />
             )}
           />

@@ -1,8 +1,11 @@
 import { Slot, SplashScreen, Stack, Tabs } from "expo-router";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function LootLayput() {
   const [fontsLoaded, error] = useFonts({
@@ -22,11 +25,14 @@ export default function LootLayput() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, error]);
+
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-    </Stack>
+    <QueryClientProvider client={queryClient}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+      </Stack>
+    </QueryClientProvider>
   );
 }

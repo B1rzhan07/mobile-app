@@ -1,11 +1,20 @@
 import { router } from "expo-router";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import { CustomButton } from "../components/CustomButton";
 import { StatusBar } from "expo-status-bar";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSubjects } from "../api/subjectServiceApiType";
 
 export default function IndexPage() {
+  const query = useQuery({
+    queryKey: ["subjects"],
+    queryFn: fetchSubjects,
+  });
+  console.log(query, 123);
+  console.log(Platform.OS === "ios");
+
   return (
     <SafeAreaView className="bg-black h-full">
       <ScrollView
@@ -38,12 +47,11 @@ export default function IndexPage() {
             />
           </View>
           <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-            Where Creativity Meets Innovation: Embark on a Journey of Limitless
-            Exploration with Aora
+            {query.data?.data.total}
           </Text>
           <CustomButton
             title="Continue with Email"
-            handlePress={() => router.push("/sign-in")}
+            handlePress={() => router.push("/home")}
             containerStyles="w-full mt-7"
           />
         </View>
